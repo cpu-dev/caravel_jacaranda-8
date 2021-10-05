@@ -1,12 +1,45 @@
+// module computer(
+//     input clock,
+//     input rx,
+//     output tx,
+//     output [3:0] led_out_data,
+//     output [6:0] seg_out_1,
+//     output [6:0] seg_out_2,
+//     output [6:0] seg_out_3
+// );
+
 module computer(
-    input clock,
-    input rx,
-    output tx,
-    output [3:0] led_out_data,
-    output [6:0] seg_out_1,
-    output [6:0] seg_out_2,
-    output [6:0] seg_out_3
+    input wire wb_clk_i,
+    input wire wb_rst_i,
+    input wire wbs_stb_i,
+    input wire wbs_cyc_i,
+    input wire wbs_we_i,
+    input wire [3:0] wbs_sel_i,
+    input wire [31:0] wbs_dat_i,
+    input wire [31:0] wbs_adr_i,
+    output wire wbs_ack_o,
+    output wire [31:0] wbs_dat_o,
+
+    input  wire [31:0] la_data_in,
+    output wire [31:0] la_data_out,
+    input  wire [31:0] la_oenb,
+
+    input  wire [`MPRJ_IO_PADS-1:0] io_in,
+    output wire [`MPRJ_IO_PADS-1:0] io_out,
+    output wire [`MPRJ_IO_PADS-1:0] io_oeb,
+
+    output wire [2:0] irq
 );
+
+/** temporary **/
+    wire rx;
+    wire tx;
+    wire [3:0] led_out_data;
+    wire [6:0] seg_out_1;
+    wire [6:0] seg_out_2;
+    wire [6:0] seg_out_3;
+/** **/
+
     wire [7:0] instr;
     wire [7:0] pc;
     wire [7:0] rd_data;
@@ -38,7 +71,7 @@ module computer(
     instr_mem instr_mem(.addr(pc),
                         .instr(instr));
 
-    cpu cpu(.clock(clock),
+    cpu cpu(.clock(wb_clk_i),
             .instr(instr),
             .pc(pc),
             .rd_data(rd_data),
@@ -50,14 +83,14 @@ module computer(
             .int_vec(int_vec),
             .reg_w_en(reg_w_en));
 
-    always @(posedge clock) begin
+    always @(posedge wb_clk_i) begin
         if(rs_data == 8'd255 && mem_w_en == 1) begin
             tx_en <= rd_data[0];
             rx_en <= rd_data[1];
         end
     end
 
-    always @(posedge clock) begin
+    always @(posedge wb_clk_i) begin
         if(rs_data == 8'd253 && mem_w_en == 1) begin
             tx_data <= rd_data;
             begin_flag = 1;
@@ -71,15 +104,15 @@ module computer(
                       .w_data(rd_data),
                       .w_en(mem_w_en),
                       .r_data(_mem_r_data),
-                      .clock(clock));
+                      .clock(wb_clk_i));
 
     assign mem_r_data = (rs_data == 8'd254) ? {6'b0, receive_flag, busy_flag}
-                      : (rs_data == 8'd252) ? rx_data   //UART RX
-                      : (rs_data == 8'd250) ? int_vec   //割り込みベクタ
+                      : (rs_data == 8'd252) ? rx_data
+                      : (rs_data == 8'd250) ? int_vec
                       : (rs_data == 8'd249) ? led_state_reg
                       : _mem_r_data;
 
-    always @(posedge clock) begin
+    always @(posedge wb_clk_i) begin
         if(rs_data == 8'd251 && mem_w_en == 1) begin
             led_in_data <= rd_data;
             led_begin_flag <= 1'b1;
@@ -89,7 +122,7 @@ module computer(
         end
     end
 
-    always @(posedge clock) begin
+    always @(posedge wb_clk_i) begin
         if(rs_data == 8'd248 && mem_w_en == 1) begin
             nanaseg_in_data <= rd_data;
         end else begin
@@ -99,7 +132,7 @@ module computer(
     
 
     //割り込み要求が立っている時は割り込み不許可
-    always @(posedge clock) begin
+    always @(posedge wb_clk_i) begin
         if(int_req == 1'b1) begin
             int_en <= 8'h00;
         end else if(int_req == 1'b0) begin
@@ -107,7 +140,7 @@ module computer(
         end
     end
 
-    always @(posedge clock) begin
+    always @(posedge wb_clk_i) begin
         //割り込みベクタの書き込み
         if(rs_data == 8'd250 && mem_w_en == 1'b1) begin
             int_vec <= rd_data;
@@ -116,7 +149,7 @@ module computer(
         end
     end
 
-    UART UART(.clk(clock),
+    UART UART(.clk(wb_clk_i),
               .tx_en(tx_en),
               .rx_en(rx_en),
               .begin_flag(begin_flag),
@@ -134,7 +167,7 @@ module computer(
               .begin_flag(led_begin_flag),
               .state_reg(led_state_reg),
               .out_data(led_out_data),
-              .clock(clock));
+              .clock(wb_clk_i));
 
     nanaseg nanaseg(.bin_in(nanaseg_in_data),
                     .seg_dig1(seg_out_1),
