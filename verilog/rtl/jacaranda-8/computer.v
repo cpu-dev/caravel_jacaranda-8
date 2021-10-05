@@ -68,8 +68,15 @@ module computer(
 
     reg [7:0] nanaseg_in_data;
 
-    instr_mem instr_mem(.addr(pc),
-                        .instr(instr));
+    wire reset = la_data_in[0];
+    wire [7:0] instr_mem_data = wbs_data_i[7:0];
+    wire instr_mem_addr[7:0] = reset ? instr_mem_data : pc;
+
+    instr_mem instr_mem(.addr(instr_mem_addr),
+                        .w_data(instr_mem_data),
+                        .w_en(reset),
+                        .r_data(instr),
+                        .clock(wb_clk_i));
 
     cpu cpu(.clock(wb_clk_i),
             .instr(instr),
