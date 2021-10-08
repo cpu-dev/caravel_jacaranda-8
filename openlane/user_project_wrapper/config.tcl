@@ -32,7 +32,17 @@ set ::env(DESIGN_NAME) user_project_wrapper
 ## Source Verilog Files
 set ::env(VERILOG_FILES) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
-	$script_dir/../../verilog/rtl/user_project_wrapper.v"
+	$script_dir/../../verilog/rtl/user_project_wrapper.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/alu.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/cpu.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/decoder.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/alu_controller.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/computer.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/data_mem.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/instr_mem.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/main_controller.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/regfile.v"
+
 
 ## Clock configurations
 set ::env(CLOCK_PORT) "user_clock2"

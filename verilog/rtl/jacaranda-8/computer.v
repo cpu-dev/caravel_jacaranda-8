@@ -156,29 +156,29 @@ module computer(
         end
     end
 
-    UART UART(.clk(wb_clk_i),
-              .tx_en(tx_en),
-              .rx_en(rx_en),
-              .begin_flag(begin_flag),
-              .rx(rx),
-              .tx_data(tx_data),
-              .tx(tx),
-              .rx_data(rx_data),
-              .busy_flag(busy_flag),
-              .receive_flag(receive_flag),
-              .int_req(int_req),
-              .access_addr(rs_data),
-              .reg_w_en(reg_w_en));
-
-    LED4 LED4(.in_data(led_in_data),
-              .begin_flag(led_begin_flag),
-              .state_reg(led_state_reg),
-              .out_data(led_out_data),
-              .clock(wb_clk_i));
-
-    nanaseg nanaseg(.bin_in(nanaseg_in_data),
-                    .seg_dig1(seg_out_1),
-                    .seg_dig2(seg_out_2),
-                    .seg_dig3(seg_out_3));
+//    UART UART(.clk(wb_clk_i),
+//              .tx_en(tx_en),
+//              .rx_en(rx_en),
+//              .begin_flag(begin_flag),
+//              .rx(rx),
+//              .tx_data(tx_data),
+//              .tx(tx),
+//              .rx_data(rx_data),
+//              .busy_flag(busy_flag),
+//              .receive_flag(receive_flag),
+//              .int_req(int_req),
+//              .access_addr(rs_data),
+//              .reg_w_en(reg_w_en));
+//
+//    LED4 LED4(.in_data(led_in_data),
+//              .begin_flag(led_begin_flag),
+//              .state_reg(led_state_reg),
+//              .out_data(led_out_data),
+//              .clock(wb_clk_i));
+//
+//    nanaseg nanaseg(.bin_in(nanaseg_in_data),
+//                    .seg_dig1(seg_out_1),
+//                    .seg_dig2(seg_out_2),
+//                    .seg_dig3(seg_out_3));
 
 endmodule
