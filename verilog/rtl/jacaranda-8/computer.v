@@ -1,3 +1,5 @@
+`default_nettype none
+
 // module computer(
 //     input clock,
 //     input rx,
@@ -8,27 +10,28 @@
 //     output [6:0] seg_out_3
 // );
 
+
 module computer(
-    input wire wb_clk_i,
-    input wire wb_rst_i,
-    input wire wbs_stb_i,
-    input wire wbs_cyc_i,
-    input wire wbs_we_i,
-    input wire [3:0] wbs_sel_i,
-    input wire [31:0] wbs_dat_i,
-    input wire [31:0] wbs_adr_i,
-    output wire wbs_ack_o,
-    output wire [31:0] wbs_dat_o,
+    input wb_clk_i,
+    input wb_rst_i,
+    input wbs_stb_i,
+    input wbs_cyc_i,
+    input wbs_we_i,
+    input [3:0] wbs_sel_i,
+    input [31:0] wbs_adr_i,
+    input [31:0] wbs_dat_i,
+    output wbs_ack_o,
+    output [31:0] wbs_dat_o,
 
-    input  wire [31:0] la_data_in,
-    output wire [31:0] la_data_out,
-    input  wire [31:0] la_oenb,
+    input  [127:0] la_data_in,
+    output [127:0] la_data_out,
+    input  [127:0] la_oenb,
 
-    input  wire [`MPRJ_IO_PADS-1:0] io_in,
-    output wire [`MPRJ_IO_PADS-1:0] io_out,
-    output wire [`MPRJ_IO_PADS-1:0] io_oeb,
+    input  [`MPRJ_IO_PADS-1:0] io_in,
+    output [`MPRJ_IO_PADS-1:0] io_out,
+    output [`MPRJ_IO_PADS-1:0] io_oeb,
 
-    output wire [2:0] irq
+    output [2:0] irq
 );
 
 /** temporary **/
@@ -69,8 +72,8 @@ module computer(
     reg [7:0] nanaseg_in_data;
 
     wire reset = la_data_in[0];
-    wire [7:0] instr_mem_data = wbs_data_i[7:0];
-    wire instr_mem_addr[7:0] = reset ? instr_mem_data : pc;
+    wire instr_mem_data = wbs_dat_i[7:0];
+    wire instr_mem_addr = reset ? instr_mem_data : pc;
 
     instr_mem instr_mem(.addr(instr_mem_addr),
                         .w_data(instr_mem_data),
