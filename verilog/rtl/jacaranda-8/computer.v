@@ -12,6 +12,16 @@
 
 
 module computer(
+`ifdef USE_POWER_PINS
+    inout vdda1,	// User area 1 3.3V supply
+    inout vdda2,	// User area 2 3.3V supply
+    inout vssa1,	// User area 1 analog ground
+    inout vssa2,	// User area 2 analog ground
+    inout vccd1,	// User area 1 1.8V supply
+    inout vccd2,	// User area 2 1.8v supply
+    inout vssd1,	// User area 1 digital ground
+    inout vssd2,	// User area 2 digital ground
+`endif
     input wb_clk_i,
     input wb_rst_i,
     input wbs_stb_i,
@@ -43,6 +53,8 @@ module computer(
     wire [6:0] seg_out_3;
 /** **/
 
+    assign io_out[7:0] = pc;
+
     wire [7:0] instr;
     wire [7:0] pc;
     wire [7:0] rd_data;
@@ -73,7 +85,7 @@ module computer(
 
     wire reset = la_data_in[0];
     wire instr_mem_data = wbs_dat_i[7:0];
-    wire instr_mem_addr = reset ? instr_mem_data : pc;
+    wire instr_mem_addr = reset ? wbs_adr_i[7:0] : pc;
 
     instr_mem instr_mem(.addr(instr_mem_addr),
                         .w_data(instr_mem_data),
