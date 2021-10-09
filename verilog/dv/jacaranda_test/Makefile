@@ -40,7 +40,7 @@ SIM?=RTL
 
 .SUFFIXES:
 
-PATTERN = la_test1
+PATTERN = jacaranda_test
 
 all:  ${PATTERN:=.vcd}
 
