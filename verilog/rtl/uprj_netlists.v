@@ -25,6 +25,9 @@
 `else
     `include "user_project_wrapper.v"
     `include "user_proj_example.v"
+    `include "jacaranda-8/UART/UART.v"
+    `include "jacaranda-8/UART/rx.v"
+    `include "jacaranda-8/UART/tx.v"
     `include "jacaranda-8/alu.v"
     `include "jacaranda-8/cpu.v"
     `include "jacaranda-8/decoder.v"

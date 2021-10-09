@@ -52,8 +52,11 @@ module computer(
     wire [6:0] seg_out_2;
     wire [6:0] seg_out_3;
 /** **/
-
-    assign io_out[7:0] = pc;
+    // output enable
+    assign io_oeb[37:36] = 2'b11;
+    // UART - GPIO
+    assign io_out[37] = tx;
+    assign io_out[36] = rx;
 
     wire [7:0] instr;
     wire [7:0] pc;
@@ -171,19 +174,20 @@ module computer(
         end
     end
 
-//    UART UART(.clk(wb_clk_i),
-//              .tx_en(tx_en),
-//              .rx_en(rx_en),
-//              .begin_flag(begin_flag),
-//              .rx(rx),
-//              .tx_data(tx_data),
-//              .tx(tx),
-//              .rx_data(rx_data),
-//              .busy_flag(busy_flag),
-//              .receive_flag(receive_flag),
-//              .int_req(int_req),
-//              .access_addr(rs_data),
-//              .reg_w_en(reg_w_en));
+    UART UART(.clk(wb_clk_i),
+              .reset(reset),
+              .tx_en(tx_en),
+              .rx_en(rx_en),
+              .begin_flag(begin_flag),
+              .rx(rx),
+              .tx_data(tx_data),
+              .tx(tx),
+              .rx_data(rx_data),
+              .busy_flag(busy_flag),
+              .receive_flag(receive_flag),
+              .int_req(int_req),
+              .access_addr(rs_data),
+              .reg_w_en(reg_w_en));
 //
 //    LED4 LED4(.in_data(led_in_data),
 //              .begin_flag(led_begin_flag),

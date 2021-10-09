@@ -3,6 +3,7 @@
 
 module UART(
     input wire clk,
+    input wire reset,
     input wire tx_en,
     input wire rx_en,
     input wire begin_flag,
@@ -14,10 +15,10 @@ module UART(
     output wire[7:0] rx_data,
     output wire busy_flag,
     output wire receive_flag,
-    output reg int_req = 1'b0
+    output reg int_req
 );
 
-    reg state = 1'b0;
+    reg state;
 
     always @(negedge clk) begin
         if(state == 1'b0) begin //データ待機中
@@ -36,8 +37,12 @@ module UART(
             end
         end
     end
+    always @(posedge reset) begin
+        int_req <= 1'b0;
+        state   <= 1'b0;
+    end
 
-    tx tx1(clk, tx_en, begin_flag, tx_data, tx, busy_flag);
+    tx tx1(clk, reset, tx_en, begin_flag, tx_data, tx, busy_flag);
     rx rx1(clk, rx_en, rx, rx_data, receive_flag);
     
 endmodule

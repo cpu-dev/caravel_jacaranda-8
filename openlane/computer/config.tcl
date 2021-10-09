@@ -25,6 +25,9 @@ set ::env(GLB_RT_MAXLAYER) 5
 
 set ::env(VERILOG_FILES) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/UART/UART.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/UART/rx.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/UART/tx.v \
     $script_dir/../../verilog/rtl/jacaranda-8/alu.v \
     $script_dir/../../verilog/rtl/jacaranda-8/cpu.v \
     $script_dir/../../verilog/rtl/jacaranda-8/decoder.v \
