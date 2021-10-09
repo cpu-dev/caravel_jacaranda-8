@@ -23,15 +23,16 @@
 
 void main()
 {
+    reg_spimaster_config = 0xa002;
 	// Configure LA probes [31:0] as inputs to the cpu 
-	reg_la0_oenb = reg_la0_iena = 0xFFFFFFFF;    // [31:0]
+	reg_la0_oenb = reg_la0_iena = 0x00000000;    // [31:0]
 
     // set reset to high
 	reg_la0_data = 1 << 16;
     
-    reg_la0_data = 0x00 << 8 | 0b11000000; // ldih 0
-    reg_la0_data = 0x01 << 8 | 0b11010000; // ldil 0
-    reg_la0_data = 0x02 << 8 | 0b10110011; // jmp r3
+    reg_la0_data = 1 << 16 | 0x00 << 8 | 0b11000000; // ldih 0  0xC0
+    reg_la0_data = 1 << 16 | 0x01 << 8 | 0b11010000; // ldil 0  0xD0
+    reg_la0_data = 1 << 16 | 0x02 << 8 | 0b10110011; // jmp r3  0xB3
 
     reg_la0_data = 0 << 16;
 
