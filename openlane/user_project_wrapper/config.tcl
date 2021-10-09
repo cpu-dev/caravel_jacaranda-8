@@ -18,7 +18,6 @@
 
 # YOU ARE NOT ALLOWED TO CHANGE ANY VARIABLES DEFINED IN THE FIXED WRAPPER CFGS 
 source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper_empty/fixed_wrapper_cfgs.tcl
-
 # YOU CAN CHANGE ANY VARIABLES DEFINED IN THE DEFAULT WRAPPER CFGS BY OVERRIDING THEM IN THIS CONFIG.TCL
 source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper_empty/default_wrapper_cfgs.tcl
 
@@ -34,6 +33,8 @@ set ::env(VERILOG_FILES) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
 	$script_dir/../../verilog/rtl/user_project_wrapper.v"
 
+set ::env(ROUTING_CORES) 16
+
 ## Clock configurations
 set ::env(CLOCK_PORT) "user_clock2"
 set ::env(CLOCK_NET) "mprj.clk"
@@ -46,18 +47,18 @@ set ::env(FP_PDN_MACRO_HOOKS) "\
 	mprj vccd1 vssd1"
 
 ### Macro Placement
-set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
+# set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
 
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
-	$script_dir/../../verilog/rtl/user_proj_example.v"
+    $script_dir/../../verilog/rtl/jacaranda-8/computer.v"
 
 set ::env(EXTRA_LEFS) "\
-	$script_dir/../../lef/user_proj_example.lef"
+	$script_dir/../../lef/computer.lef"
 
 set ::env(EXTRA_GDS_FILES) "\
-	$script_dir/../../gds/user_proj_example.gds"
+	$script_dir/../../gds/computer.gds"
 
 set ::env(GLB_RT_MAXLAYER) 5
 
@@ -80,3 +81,5 @@ set ::env(DIODE_INSERTION_STRATEGY) 0
 set ::env(FILL_INSERTION) 0
 set ::env(TAP_DECAP_INSERTION) 0
 set ::env(CLOCK_TREE_SYNTH) 0
+
+set ::env(GLB_RT_OVERFLOW_ITERS) 80
