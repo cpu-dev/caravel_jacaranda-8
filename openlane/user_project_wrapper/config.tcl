@@ -33,6 +33,8 @@ set ::env(VERILOG_FILES) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
 	$script_dir/../../verilog/rtl/user_project_wrapper.v"
 
+set ::env(ROUTING_CORES) 16
+
 ## Clock configurations
 set ::env(CLOCK_PORT) "user_clock2"
 set ::env(CLOCK_NET) "mprj.clk"
@@ -50,7 +52,6 @@ set ::env(FP_PDN_MACRO_HOOKS) "\
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
-	$script_dir/../../verilog/rtl/user_proj_example.v \
     $script_dir/../../verilog/rtl/jacaranda-8/computer.v"
 
 set ::env(EXTRA_LEFS) "\
