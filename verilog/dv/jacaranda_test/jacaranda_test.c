@@ -32,5 +32,9 @@ void main()
     reg_la0_data = 0x00 << 8 | 0b11000000; // ldih 0
     reg_la0_data = 0x01 << 8 | 0b11010000; // ldil 0
     reg_la0_data = 0x02 << 8 | 0b10110011; // jmp r3
+
+    reg_la0_data = 0 << 16;
+
+    while(1) {}
 }
 
