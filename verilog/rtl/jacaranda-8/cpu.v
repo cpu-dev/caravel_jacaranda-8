@@ -1,5 +1,6 @@
-module cpu(clock, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_req, int_en, int_vec, reg_w_en);
-    input clock;
+module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_req, int_en, int_vec, reg_w_en);
+    input raw_clock;
+    input reset;
     input [7:0] instr;
     //割り込み要求線
     input int_req;
@@ -36,6 +37,8 @@ module cpu(clock, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_req, in
     //レジスタに書き込むデータをALUからのデータか選択する(1)でALUから(0)でそれ以外
     wire reg_alu_w_sel;
 
+    wire clock;
+    assign clock = reset ? 1'b0 : raw_clock;
 
     //ALUの制御信号
     wire [3:0] alu_ctrl;
