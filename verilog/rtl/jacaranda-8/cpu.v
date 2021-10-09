@@ -38,7 +38,7 @@ module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, 
     wire reg_alu_w_sel;
 
     wire clock;
-    assign clock = reset ? 1'b0 : raw_clock;
+    assign clock = reset ? 1'b1 : raw_clock;
 
     //ALUの制御信号
     wire [3:0] alu_ctrl;
@@ -111,7 +111,7 @@ module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, 
         end
     end
 
-    always @(negedge reset) begin
+    always @(posedge reset) begin
         ret_addr<= 8'h00;
         flag    <= 1'b0;
         pc      <= 8'h00;

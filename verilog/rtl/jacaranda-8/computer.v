@@ -89,19 +89,12 @@ module computer(
     wire [7:0] instr_mem_addr;
     wire [7:0] instr_mem_data; 
 
+    wire reset;
+
+    assign reset = la_data_in[16];
     assign instr_mem_addr = reset ? la_data_in[15:8] : pc;
     assign instr_mem_data = la_data_in[7:0];
 
-    reg reset = 1'b1;
-    wire raw_reset; 
-    assign raw_reset = la_data_in[16];
-
-    //assign reset = ((raw_reset == 1'b0) && (pre_reset == 1'b1));
-    always @(posedge wb_clk_i) begin
-        if(raw_reset == 1'b0) begin
-            reset <= 1'b0;
-        end
-    end
 
     instr_mem instr_mem(.addr(instr_mem_addr),
                         .w_data(instr_mem_data),
