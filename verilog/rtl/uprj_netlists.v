@@ -37,4 +37,5 @@
     `include "jacaranda-8/instr_mem.v"
     `include "jacaranda-8/main_controller.v"
     `include "jacaranda-8/regfile.v"
+    `include "jacaranda-8/wishbone.v"
 `endif

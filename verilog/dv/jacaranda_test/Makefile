@@ -42,7 +42,7 @@ SIM?=RTL
 
 PATTERN = jacaranda_test
 
-all:  ${PATTERN:=.vcd}
+all:  ${PATTERN:=.fst}
 
 hex:  ${PATTERN:=.hex}
 
@@ -59,7 +59,7 @@ else
 	$< -o $@ 
 endif
 
-%.vcd: %.vvp
+%.fst: %.vvp
 	vvp $<
 
 %.elf: %.c $(CARAVEL_FIRMWARE_PATH)/sections.lds $(CARAVEL_FIRMWARE_PATH)/start.s check-env
@@ -91,6 +91,6 @@ endif
 # ---- Clean ----
 
 clean:
-	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log
+	rm -f *.elf *.hex *.bin *.vvp *.fst *.log
 
 .PHONY: clean hex all

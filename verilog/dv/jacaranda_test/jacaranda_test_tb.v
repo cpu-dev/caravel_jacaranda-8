@@ -42,11 +42,11 @@ module jacaranda_test_tb;
 	end
 
 	initial begin
-		$dumpfile("jacaranda_test.vcd");
+		$dumpfile("jacaranda_test.fst");
 		$dumpvars(0, jacaranda_test_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (10) begin
+		repeat (30) begin
 			repeat (1000) @(posedge clock);
 			    $display("+1000 cycles");
 		end
