@@ -90,12 +90,16 @@ module computer(
     wire [7:0] instr_mem_data; 
     wire instr_mem_en;
 
+    wire [7:0] wb_instr_req_addr;
+
+    assign instr_mem_addr = reset ? wb_instr_req_addr: pc;
+
     wire reset;
 
     assign reset = la_data_in[0];
 
     wire clock;
-    assign clock = ~reset & wb_clk_i;
+    assign clock = reset ? 1'b1 : wb_clk_i;
 
     wishbone wb(.wb_clk_i(wb_clk_i),
                 .wb_rst_i(wb_rst_i),
@@ -107,7 +111,7 @@ module computer(
                 .wbs_dat_i(wbs_dat_i),
                 .wbs_ack_o(wbs_ack_o),
                 .wbs_dat_o(wbs_dat_o),
-                .instr_mem_addr(instr_mem_addr),
+                .instr_mem_addr(wb_instr_req_addr),
                 .instr_mem_data(instr_mem_data),
                 .instr_mem_en(instr_mem_en));
 
@@ -115,7 +119,8 @@ module computer(
                         .w_data(instr_mem_data),
                         .w_en(instr_mem_en),
                         .r_data(instr),
-                        .clock(wb_clk_i));
+                        .clock(wb_clk_i),
+                        .reset(reset));
 
     cpu cpu(.clock(clock),
             .reset(reset),

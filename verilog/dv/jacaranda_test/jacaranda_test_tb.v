@@ -46,7 +46,7 @@ module jacaranda_test_tb;
 		$dumpvars(0, jacaranda_test_tb);
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
-		repeat (30) begin
+		repeat (20) begin
 			repeat (1000) @(posedge clock);
 			    $display("+1000 cycles");
 		end

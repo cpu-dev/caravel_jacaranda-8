@@ -15,8 +15,7 @@ module wishbone(
     output reg instr_mem_en
 );
 
-// 0x3000_0100 - 0x3000_01FF: IMEM_WRITE
-parameter IMEM_WRITE_PREFIX = 24'h3000_01;
+parameter IMEM_WRITE = 32'h3000_0000;
 
 wire valid;
 wire we;
@@ -41,23 +40,18 @@ assign clk   = wb_clk_i;
 
 always @(posedge clk) begin
     if(reset) begin
-        // reset
         ready <= 1'b0;
     end else begin
         if(ready) begin
             ready <= 1'b0;
             instr_mem_en <= 1'b0;
         end
-        // Read
         if (valid && !ready && !we) begin
-            //case(addr)
-            //endcase
             ready <= 1'b1;
-        // Write
         end else if (valid && !ready && we) begin
-            case(addr[31:8])
-                IMEM_WRITE_PREFIX: begin
-                    instr_mem_addr <= addr[7:0];
+            case(addr)
+                IMEM_WRITE: begin
+                    instr_mem_addr <= wdata[15:8];
                     instr_mem_data <= wdata[7:0];
                     instr_mem_en <= 1'b1;
                 end

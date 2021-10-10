@@ -24,7 +24,7 @@
 //
 
 #define BASE_ADDR 0x30000000
-#define IMEM_WRITE (BASE_ADDR + 0x100)
+#define IMEM_WRITE BASE_ADDR
 
 static void
 write(uint32_t addr, uint32_t val)
@@ -52,9 +52,9 @@ main()
     // set reset to high
 	reg_la0_data = 1;
 
-    write(IMEM_WRITE + 0x00, 0b11000000);
-    write(IMEM_WRITE + 0x01, 0b11010000);
-    write(IMEM_WRITE + 0x02, 0b10110011);
+    write(IMEM_WRITE, 0x00 << 8 | 0xC0);
+    write(IMEM_WRITE, 0x01 << 8 | 0xD0);
+    write(IMEM_WRITE, 0x02 << 8 | 0xB3);
 
 //    reg_la0_data = 1 << 16 | 0x00 << 8 | 0b11000000; // ldih 0  0xC0
 //    reg_la0_data = 1 << 16 | 0x01 << 8 | 0b11010000; // ldil 0  0xD0
