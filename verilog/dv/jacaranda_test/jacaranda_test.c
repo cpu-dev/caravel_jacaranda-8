@@ -52,9 +52,9 @@ main()
     // set reset to high
 	reg_la0_data = 1;
 
-    write(IMEM_WRITE, 0x00 << 8 | 0xC0);
-    write(IMEM_WRITE, 0x01 << 8 | 0xD0);
-    write(IMEM_WRITE, 0x02 << 8 | 0xB3);
+    for(int i = 0; i < 26; ++i) {
+        write(IMEM_WRITE, i << 8 | mem[i]);
+    }
 
 //    reg_la0_data = 1 << 16 | 0x00 << 8 | 0b11000000; // ldih 0  0xC0
 //    reg_la0_data = 1 << 16 | 0x01 << 8 | 0b11010000; // ldil 0  0xD0
