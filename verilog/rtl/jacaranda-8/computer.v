@@ -69,7 +69,8 @@ module computer(
     wire receive_flag;
     reg tx_en;
     reg rx_en;
-    reg begin_flag;
+    //reg begin_flag;
+    wire begin_flag;
     reg [7:0] tx_data;
     wire [7:0] rx_data;
 
@@ -145,12 +146,13 @@ module computer(
     always @(posedge clock) begin
         if(rs_data == 8'd253 && mem_w_en == 1) begin
             tx_data <= rd_data;
-            begin_flag = 1;
+            //begin_flag = 1;
         end else begin
             tx_data <= tx_data;
-            begin_flag = 0;
+            //begin_flag = 0;
         end
     end
+    assign begin_flag = (rs_data == 8'd253) & (mem_w_en == 1);
 
     data_mem data_mem(.addr(rs_data),
                       .w_data(rd_data),

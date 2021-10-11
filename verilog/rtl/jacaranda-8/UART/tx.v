@@ -7,30 +7,32 @@ module tx(clk, reset, tx_en, begin_flag, data, tx, busy_flag);
     output reg tx;
     output wire busy_flag;
 
-    parameter CLK_FREQ = 50_000_000;
+    parameter CLK_FREQ = 40_000_000;
     parameter BAUD_RATE = 115200;
     parameter CLK_COUNT_BIT = CLK_FREQ / BAUD_RATE;
 
-    reg[1:0] state = 2'b00;
-    reg[31:0] clk_count = 32'd0;
-    reg[2:0] bit_count = 3'd0;
+    reg[1:0] state;
+    reg[31:0] clk_count;
+    reg[2:0] bit_count;
     wire update_flag;
     
     assign update_flag = (clk_count == CLK_COUNT_BIT - 32'd1);
     assign busy_flag = ~(state == 2'b00);
 
     always @(posedge reset) begin
+        clk_count   <= 32'd0;
         tx          <= 1'b1;
         state       <= 2'b00;
         bit_count   <= 3'd0;
     end
+
     always @(posedge clk) begin
         case(state)
             2'b00: begin
                 tx <= 1'b1;
                 clk_count = 32'd0;
                 bit_count <= 3'd0;
-                state <= begin_flag & tx_en ? 2'b01 : state;
+                state <= (begin_flag & tx_en) ? 2'b01 : state;
             end
             2'b01: begin
                 tx <= 1'b0;
