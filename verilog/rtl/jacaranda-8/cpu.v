@@ -1,5 +1,5 @@
-module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_req, int_en, int_vec, reg_w_en);
-    input raw_clock;
+module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_req, int_en, int_vec, reg_w_en);
+    input clock;
     input reset;
     input [7:0] instr;
     //割り込み要求線
@@ -18,7 +18,7 @@ module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, 
     //メモリから読み込んだデータ
     input [7:0] mem_r_data;
     reg flag;
-    reg [7:0] pc = 0;
+    reg [7:0] pc;
     
     wire [3:0] opcode;
     wire [1:0] rd_a, rd_a_p, rs_a, rs_a_p;
@@ -36,9 +36,6 @@ module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, 
     wire reg_reg_mem_w_sel;
     //レジスタに書き込むデータをALUからのデータか選択する(1)でALUから(0)でそれ以外
     wire reg_alu_w_sel;
-
-    wire clock;
-    assign clock = reset ? 1'b0 : raw_clock;
 
     //ALUの制御信号
     wire [3:0] alu_ctrl;
@@ -110,6 +107,14 @@ module cpu(raw_clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, 
             ret_addr <= ret_addr;
         end
     end
+
+    always @(posedge reset) begin
+        ret_addr<= 8'h00;
+        flag    <= 1'b0;
+        pc      <= 8'h00;
+        intr_en <= 1'b0;
+        _flag   <= 1'b0;
+    end 
 
     always @(posedge clock) begin
         if(int_req && int_en[0]) begin

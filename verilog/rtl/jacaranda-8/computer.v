@@ -53,13 +53,14 @@ module computer(
     wire [6:0] seg_out_3;
 /** **/
     // output enable
-    assign io_oeb[37:36] = 2'b11;
+    assign io_oeb[37:36] = 2'b10;
     // UART - GPIO
     assign io_out[37] = tx;
-    assign io_out[36] = rx;
+    assign rx = io_in[36];
 
     wire [7:0] instr;
     wire [7:0] pc;
+    assign la_data_out[7:0] = pc;
     wire [7:0] rd_data;
     wire [7:0] rs_data;
     wire mem_w_en;
@@ -69,7 +70,8 @@ module computer(
     wire receive_flag;
     reg tx_en;
     reg rx_en;
-    reg begin_flag;
+    //reg begin_flag;
+    wire begin_flag;
     reg [7:0] tx_data;
     wire [7:0] rx_data;
 
@@ -86,21 +88,43 @@ module computer(
 
     reg [7:0] nanaseg_in_data;
 
-    wire reset; 
     wire [7:0] instr_mem_addr;
     wire [7:0] instr_mem_data; 
+    wire instr_mem_en;
 
-    assign reset = la_data_in[16];
-    assign instr_mem_addr = reset ? la_data_in[15:8] : pc;
-    assign instr_mem_data = la_data_in[7:0];
+    wire [7:0] wb_instr_req_addr;
+
+    assign instr_mem_addr = reset ? wb_instr_req_addr: pc;
+
+    wire reset;
+
+    assign reset = la_data_in[0];
+
+    wire clock;
+    assign clock = reset ? 1'b1 : wb_clk_i;
+
+    wishbone wb(.wb_clk_i(wb_clk_i),
+                .wb_rst_i(wb_rst_i),
+                .wbs_stb_i(wbs_stb_i),
+                .wbs_cyc_i(wbs_cyc_i),
+                .wbs_we_i(wbs_we_i),
+                .wbs_sel_i(wbs_sel_i),
+                .wbs_adr_i(wbs_adr_i),
+                .wbs_dat_i(wbs_dat_i),
+                .wbs_ack_o(wbs_ack_o),
+                .wbs_dat_o(wbs_dat_o),
+                .instr_mem_addr(wb_instr_req_addr),
+                .instr_mem_data(instr_mem_data),
+                .instr_mem_en(instr_mem_en));
 
     instr_mem instr_mem(.addr(instr_mem_addr),
                         .w_data(instr_mem_data),
-                        .w_en(reset),
+                        .w_en(instr_mem_en),
                         .r_data(instr),
-                        .clock(wb_clk_i));
+                        .clock(wb_clk_i),
+                        .reset(reset));
 
-    cpu cpu(.raw_clock(wb_clk_i),
+    cpu cpu(.clock(clock),
             .reset(reset),
             .instr(instr),
             .pc(pc),
@@ -113,28 +137,29 @@ module computer(
             .int_vec(int_vec),
             .reg_w_en(reg_w_en));
 
-    always @(posedge wb_clk_i) begin
+    always @(posedge clock) begin
         if(rs_data == 8'd255 && mem_w_en == 1) begin
             tx_en <= rd_data[0];
             rx_en <= rd_data[1];
         end
     end
 
-    always @(posedge wb_clk_i) begin
+    always @(posedge clock) begin
         if(rs_data == 8'd253 && mem_w_en == 1) begin
             tx_data <= rd_data;
-            begin_flag = 1;
+            //begin_flag = 1;
         end else begin
             tx_data <= tx_data;
-            begin_flag = 0;
+            //begin_flag = 0;
         end
     end
+    assign begin_flag = (rs_data == 8'd253) & (mem_w_en == 1);
 
     data_mem data_mem(.addr(rs_data),
                       .w_data(rd_data),
                       .w_en(mem_w_en),
                       .r_data(_mem_r_data),
-                      .clock(wb_clk_i));
+                      .clock(clock));
 
     assign mem_r_data = (rs_data == 8'd254) ? {6'b0, receive_flag, busy_flag}
                       : (rs_data == 8'd252) ? rx_data
@@ -142,7 +167,7 @@ module computer(
                       : (rs_data == 8'd249) ? led_state_reg
                       : _mem_r_data;
 
-    always @(posedge wb_clk_i) begin
+    always @(posedge clock) begin
         if(rs_data == 8'd251 && mem_w_en == 1) begin
             led_in_data <= rd_data;
             led_begin_flag <= 1'b1;
@@ -152,7 +177,7 @@ module computer(
         end
     end
 
-    always @(posedge wb_clk_i) begin
+    always @(posedge clock) begin
         if(rs_data == 8'd248 && mem_w_en == 1) begin
             nanaseg_in_data <= rd_data;
         end else begin
@@ -162,7 +187,7 @@ module computer(
     
 
     //割り込み要求が立っている時は割り込み不許可
-    always @(posedge wb_clk_i) begin
+    always @(posedge clock) begin
         if(int_req == 1'b1) begin
             int_en <= 8'h00;
         end else if(int_req == 1'b0) begin
@@ -170,7 +195,7 @@ module computer(
         end
     end
 
-    always @(posedge wb_clk_i) begin
+    always @(posedge clock) begin
         //割り込みベクタの書き込み
         if(rs_data == 8'd250 && mem_w_en == 1'b1) begin
             int_vec <= rd_data;
@@ -179,7 +204,7 @@ module computer(
         end
     end
 
-    UART UART(.clk(wb_clk_i),
+    UART UART(.clk(clock),
               .reset(reset),
               .tx_en(tx_en),
               .rx_en(rx_en),
