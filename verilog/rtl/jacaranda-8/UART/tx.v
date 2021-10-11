@@ -19,51 +19,51 @@ module tx(clk, reset, tx_en, begin_flag, data, tx, busy_flag);
     assign update_flag = (clk_count == CLK_COUNT_BIT - 32'd1);
     assign busy_flag = ~(state == 2'b00);
 
-    always @(posedge reset) begin
-        clk_count   <= 32'd0;
-        tx          <= 1'b1;
-        state       <= 2'b00;
-        bit_count   <= 3'd0;
-    end
-
-    always @(posedge clk) begin
-        case(state)
-            2'b00: begin
-                tx <= 1'b1;
-                clk_count = 32'd0;
-                bit_count <= 3'd0;
-                state <= (begin_flag & tx_en) ? 2'b01 : state;
-            end
-            2'b01: begin
-                tx <= 1'b0;
-                clk_count <= clk_count + 32'd1;
-                if(update_flag) begin
-                    state <= 2'b11;
-                    clk_count <= 32'd0;
+    always @(posedge clk or posedge reset) begin
+        if(reset) begin
+            clk_count <= 32'd0;
+            bit_count <= 3'd0;
+            state <= 2'b00;
+            tx  <= 1'b1;
+        end else begin
+            case(state)
+                2'b00: begin
+                    tx <= 1'b1;
+                    clk_count = 32'd0;
+                    bit_count <= 3'd0;
+                    state <= (begin_flag & tx_en) ? 2'b01 : state;
                 end
-            end
-            2'b11: begin
-                tx <= data[bit_count];
-                clk_count <= clk_count + 32'd1;
-                if(update_flag) begin
-                    state <= (bit_count == 3'd7) ? 2'b10 : state;
-                    bit_count <= bit_count + 3'd1;
-                    clk_count <= 32'd0;
-                end
-            end
-            2'b10: begin
-                tx <= 1'b1;
-                clk_count <= clk_count + 32'd1;
-                case({update_flag, begin_flag})
-                    2'b11: begin
-                        state <= 2'b01;
+                2'b01: begin
+                    tx <= 1'b0;
+                    clk_count <= clk_count + 32'd1;
+                    if(update_flag) begin
+                        state <= 2'b11;
                         clk_count <= 32'd0;
-                        bit_count <= 3'd0;
                     end
-                    2'b10: state <= 2'b00;
-                    default: state <= state;
-                endcase
-            end
-        endcase
+                end
+                2'b11: begin
+                    tx <= data[bit_count];
+                    clk_count <= clk_count + 32'd1;
+                    if(update_flag) begin
+                        state <= (bit_count == 3'd7) ? 2'b10 : state;
+                        bit_count <= bit_count + 3'd1;
+                        clk_count <= 32'd0;
+                    end
+                end
+                2'b10: begin
+                    tx <= 1'b1;
+                    clk_count <= clk_count + 32'd1;
+                    case({update_flag, begin_flag})
+                        2'b11: begin
+                            state <= 2'b01;
+                            clk_count <= 32'd0;
+                            bit_count <= 3'd0;
+                        end
+                        2'b10: state <= 2'b00;
+                        default: state <= state;
+                    endcase
+                end
+            endcase
+        end
     end
 endmodule

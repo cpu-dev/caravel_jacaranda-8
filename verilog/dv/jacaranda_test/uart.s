@@ -22,5 +22,8 @@ ldil c
 je r3
 st r0, r1
 ldih 0
-ldil 6
+ldil 1
+add r0, r3
+ldih 0
+ldil c
 jmp r3

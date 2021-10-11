@@ -53,13 +53,14 @@ module computer(
     wire [6:0] seg_out_3;
 /** **/
     // output enable
-    assign io_oeb[37:36] = 2'b11;
+    assign io_oeb[37:36] = 2'b10;
     // UART - GPIO
     assign io_out[37] = tx;
-    assign io_out[36] = rx;
+    assign rx = io_in[36];
 
     wire [7:0] instr;
     wire [7:0] pc;
+    assign la_data_out[7:0] = pc;
     wire [7:0] rd_data;
     wire [7:0] rs_data;
     wire mem_w_en;

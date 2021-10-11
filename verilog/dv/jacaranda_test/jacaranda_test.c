@@ -35,10 +35,13 @@ write(uint32_t addr, uint32_t val)
 void
 reset()
 {
+    reg_mprj_io_37 = GPIO_MODE_MGMT_STD_OUTPUT;
     reg_la0_iena = 0;
     reg_la0_oenb = 0;
 
     reg_la0_data = 0;
+    reg_mprj_xfer = 1;
+    while (reg_mprj_xfer == 1);
 }
 
 void
@@ -52,7 +55,7 @@ main()
     // set reset to high
 	reg_la0_data = 1;
 
-    for(int i = 0; i < 26; ++i) {
+    for(int i = 0; i < 29; ++i) {
         write(IMEM_WRITE, i << 8 | mem[i]);
     }
 
