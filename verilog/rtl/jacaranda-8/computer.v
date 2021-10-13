@@ -53,7 +53,9 @@ module computer(
     wire [6:0] seg_out_3;
 /** **/
     // output enable
-    assign io_oeb[37:0] = 38'h00_0000_0000;
+    assign io_oeb[37:36] = 2'b00;
+    assign io_oeb[35:28] = 8'hff;
+    assign io_oeb[27:0] = 28'h00000000;
     // UART - GPIO
     assign io_out[37] = tx;
     assign rx = io_in[36];
@@ -100,8 +102,8 @@ module computer(
     reg [7:0] gpio_out;
     wire [7:0] gpio_in;
 
-    assign mprj_io[35:28] = gpio_out;
-    assign gpio_in   = mprj_io[27:20];
+    assign io_in[35:28] = gpio_out;
+    assign gpio_in   = io_out[27:20];
 
     wire reset;
 
