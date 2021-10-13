@@ -40,6 +40,7 @@ set ::env(VERILOG_FILES) "\
     $script_dir/../../verilog/rtl/jacaranda-8/wishbone.v"
 
 set ::env(CLOCK_PORT) wb_clk_i
+set ::env(CLOCK_NET) wb_clk_i
 set ::env(CLOCK_PERIOD) 10
 
 set ::env(FP_SIZING) absolute
