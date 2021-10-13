@@ -52,10 +52,7 @@ module computer(
     wire [6:0] seg_out_2;
     wire [6:0] seg_out_3;
 /** **/
-    // output enable
-    assign io_oeb[37:36] = 2'b00;
-    assign io_oeb[35:28] = 8'hff;
-    assign io_oeb[27:0] = 28'h00000000;
+    assign io_oeb[37:0] = 38'h00_0000_0000;
     // UART - GPIO
     assign io_out[37] = tx;
     assign rx = io_in[36];
