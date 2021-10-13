@@ -16,6 +16,7 @@ module alu(rd, rs, alu_ctrl, alu_out);
             4'b0101: execute = rd >> rs;
             4'b0110: execute = $signed(rd) >>> $signed(rs);
             4'b0111: execute = (rd == rs);
+            4'b1000: execute = rd - rs;
             default: execute = 8'b0000_0000;
             endcase
         end
