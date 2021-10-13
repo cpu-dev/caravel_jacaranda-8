@@ -60,7 +60,6 @@ module computer(
 
     wire [7:0] instr;
     wire [7:0] pc;
-    assign la_data_out[7:0] = pc;
     wire [7:0] rd_data;
     wire [7:0] rs_data;
     wire mem_w_en;
@@ -94,6 +93,8 @@ module computer(
 
     wire [7:0] wb_instr_req_addr;
 
+    wire [31:0] uart_clk_freq;
+
     assign instr_mem_addr = reset ? wb_instr_req_addr: pc;
 
     wire reset;
@@ -115,7 +116,9 @@ module computer(
                 .wbs_dat_o(wbs_dat_o),
                 .instr_mem_addr(wb_instr_req_addr),
                 .instr_mem_data(instr_mem_data),
-                .instr_mem_en(instr_mem_en));
+                .instr_mem_en(instr_mem_en),
+                .uart_freq(uart_clk_freq)
+            );
 
     instr_mem instr_mem(.addr(instr_mem_addr),
                         .w_data(instr_mem_data),
@@ -217,7 +220,9 @@ module computer(
               .receive_flag(receive_flag),
               .int_req(int_req),
               .access_addr(rs_data),
-              .reg_w_en(reg_w_en));
+              .reg_w_en(reg_w_en),
+              .clk_freq(uart_clk_freq)
+        );
 //
 //    LED4 LED4(.in_data(led_in_data),
 //              .begin_flag(led_begin_flag),

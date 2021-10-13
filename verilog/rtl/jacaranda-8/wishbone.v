@@ -12,10 +12,13 @@ module wishbone(
 
     output reg [7:0] instr_mem_addr,
     output reg [7:0] instr_mem_data,
-    output reg instr_mem_en
+    output reg instr_mem_en,
+
+    output reg [31:0] uart_freq
 );
 
 parameter IMEM_WRITE = 32'h3000_0000;
+parameter UART_CLK_FREQ = 32'h3000_0004;
 
 wire valid;
 wire we;
@@ -54,6 +57,9 @@ always @(posedge clk) begin
                     instr_mem_addr <= wdata[15:8];
                     instr_mem_data <= wdata[7:0];
                     instr_mem_en <= 1'b1;
+                end
+                UART_CLK_FREQ: begin
+                    uart_freq <= wdata;
                 end
             endcase
             ready <= 1'b1;
