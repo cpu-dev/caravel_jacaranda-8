@@ -15,10 +15,16 @@ module UART(
     output wire[7:0] rx_data,
     output wire busy_flag,
     output wire receive_flag,
-    output reg int_req
+    output reg int_req,
+    input wire [31:0] clk_freq
 );
 
+    parameter BAUD_RATE = 115200;
+
+    wire [31:0] clk_count_bit;
     reg state;
+
+    assign clk_count_bit = clk_freq / BAUD_RATE;
 
     always @(negedge clk) begin
         if(state == 1'b0) begin //データ待機中
@@ -42,7 +48,7 @@ module UART(
         state   <= 1'b0;
     end
 
-    tx tx1(clk, reset, tx_en, begin_flag, tx_data, tx, busy_flag);
-    rx rx1(clk, rx_en, rx, rx_data, receive_flag);
+    tx tx1(clk, reset, tx_en, begin_flag, tx_data, tx, busy_flag, clk_count_bit);
+    rx rx1(clk, rx_en, rx, rx_data, receive_flag, clk_count_bit);
     
 endmodule

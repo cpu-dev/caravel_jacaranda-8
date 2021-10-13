@@ -25,6 +25,7 @@
 
 #define BASE_ADDR 0x30000000
 #define IMEM_WRITE BASE_ADDR
+#define UART_CLK_FREQ BASE_ADDR + 0x4
 
 static void
 write(uint32_t addr, uint32_t val)
@@ -54,6 +55,9 @@ main()
 
     // set reset to high
 	reg_la0_data = 1;
+
+    // set uart clk frequency
+    write(UART_CLK_FREQ, 40000000);
 
     for(int i = 0; i < 29; ++i) {
         write(IMEM_WRITE, i << 8 | mem[i]);

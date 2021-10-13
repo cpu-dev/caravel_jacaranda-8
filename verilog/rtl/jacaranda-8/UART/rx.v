@@ -1,24 +1,24 @@
-module rx(clk, rx_en, rx, data, end_flag);
+module rx(clk, rx_en, rx, data, end_flag, clk_count_bit);
     input wire clk;
     input wire rx_en;
     input wire rx;
     output reg[7:0] data = 8'b00000000;
     output reg end_flag = 1'b0;
+    input wire [31:0] clk_count_bit;
 
-    parameter CLK_FREQ = 50_000_000;
-    parameter BAUD_RATE = 115200;
-    parameter CLK_COUNT_BIT = CLK_FREQ / BAUD_RATE;
-    parameter CLK_BEGIN_TO_RECEIVE = CLK_COUNT_BIT + CLK_COUNT_BIT / 2 - 4;
-    
+    wire [31:0] clk_begin_to_receive;
+
     reg[1:0] state = 2'b00;
     reg[31:0] clk_count = 32'd0;
     reg[2:0] bit_count = 3'd0;
     reg[3:0] recent = 4'b1111;
     wire update_flag;
 
+    assign clk_begin_to_receive = clk_count_bit + clk_count_bit / 2 - 4;
+
     assign update_flag = (state == 2'b01) 
-        ? clk_count == CLK_BEGIN_TO_RECEIVE 
-        : clk_count == CLK_COUNT_BIT - 32'd1;
+        ? clk_count == clk_begin_to_receive
+        : clk_count == clk_count_bit - 32'd1;
     
     always @(posedge clk) begin
         case(state)
