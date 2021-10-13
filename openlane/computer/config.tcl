@@ -36,13 +36,15 @@ set ::env(VERILOG_FILES) "\
     $script_dir/../../verilog/rtl/jacaranda-8/data_mem.v \
     $script_dir/../../verilog/rtl/jacaranda-8/instr_mem.v \
     $script_dir/../../verilog/rtl/jacaranda-8/main_controller.v \
-    $script_dir/../../verilog/rtl/jacaranda-8/regfile.v"
+    $script_dir/../../verilog/rtl/jacaranda-8/regfile.v \
+    $script_dir/../../verilog/rtl/jacaranda-8/wishbone.v"
 
 set ::env(CLOCK_PORT) wb_clk_i
-set ::env(CLOCK_PERIOD) 20
+set ::env(CLOCK_NET) wb_clk_i
+set ::env(CLOCK_PERIOD) 10
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 1000 1000"
+set ::env(DIE_AREA) "0 0 1000 2000"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
