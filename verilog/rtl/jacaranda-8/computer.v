@@ -52,8 +52,7 @@ module computer(
     wire [6:0] seg_out_2;
     wire [6:0] seg_out_3;
 /** **/
-    // output enable
-    assign io_oeb[37:36] = 2'b10;
+    assign io_oeb[37:0] = 38'h00_0000_0000;
     // UART - GPIO
     assign io_out[37] = tx;
     assign rx = io_in[36];
@@ -96,6 +95,12 @@ module computer(
     wire [31:0] uart_clk_freq;
 
     assign instr_mem_addr = reset ? wb_instr_req_addr: pc;
+
+    reg [7:0] gpio_out;
+    wire [7:0] gpio_in;
+
+    assign io_in[35:28] = gpio_out;
+    assign gpio_in   = io_out[27:20];
 
     wire reset;
 
@@ -156,6 +161,15 @@ module computer(
             //begin_flag = 0;
         end
     end
+
+    always @(posedge clock) begin
+        if(rs_data == 8'd251 && mem_w_en == 1) begin
+            gpio_out <= rd_data;
+        end else begin
+            gpio_out <= gpio_out;
+        end
+    end
+
     assign begin_flag = (rs_data == 8'd253) & (mem_w_en == 1);
 
     data_mem data_mem(.addr(rs_data),
@@ -166,28 +180,10 @@ module computer(
 
     assign mem_r_data = (rs_data == 8'd254) ? {6'b0, receive_flag, busy_flag}
                       : (rs_data == 8'd252) ? rx_data
+                      : (rs_data == 8'd251) ? gpio_out
                       : (rs_data == 8'd250) ? int_vec
-                      : (rs_data == 8'd249) ? led_state_reg
-                      : _mem_r_data;
-
-    always @(posedge clock) begin
-        if(rs_data == 8'd251 && mem_w_en == 1) begin
-            led_in_data <= rd_data;
-            led_begin_flag <= 1'b1;
-        end else begin
-            led_in_data <= led_in_data;
-            led_begin_flag <= 1'b0;
-        end
-    end
-
-    always @(posedge clock) begin
-        if(rs_data == 8'd248 && mem_w_en == 1) begin
-            nanaseg_in_data <= rd_data;
-        end else begin
-            nanaseg_in_data <= nanaseg_in_data;
-        end
-    end
-    
+                      : (rs_data == 8'd249) ? gpio_in
+                      : _mem_r_data;   
 
     //割り込み要求が立っている時は割り込み不許可
     always @(posedge clock) begin
@@ -223,16 +219,5 @@ module computer(
               .reg_w_en(reg_w_en),
               .clk_freq(uart_clk_freq)
         );
-//
-//    LED4 LED4(.in_data(led_in_data),
-//              .begin_flag(led_begin_flag),
-//              .state_reg(led_state_reg),
-//              .out_data(led_out_data),
-//              .clock(wb_clk_i));
-//
-//    nanaseg nanaseg(.bin_in(nanaseg_in_data),
-//                    .seg_dig1(seg_out_1),
-//                    .seg_dig2(seg_out_2),
-//                    .seg_dig3(seg_out_3));
 
 endmodule
