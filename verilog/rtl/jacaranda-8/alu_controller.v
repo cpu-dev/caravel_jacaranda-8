@@ -8,6 +8,7 @@ module alu_controller(opcode, alu_ctrl);
         begin
             case(opcode)
                 4'b0001: alu_control = 4'b0000;
+                4'b0010: alu_control = 4'b1000;
                 4'b0011: alu_control = 4'b0001;
                 4'b0100: alu_control = 4'b0010;
                 4'b0101: alu_control = 4'b0011;
