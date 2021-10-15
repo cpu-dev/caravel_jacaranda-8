@@ -1,3 +1,17 @@
+// Copyright 2021 cpu-dev
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 `default_nettype none
 
 // module computer(
@@ -44,15 +58,10 @@ module computer(
     output [2:0] irq
 );
 
-/** temporary **/
     wire rx;
     wire tx;
-    wire [3:0] led_out_data;
-    wire [6:0] seg_out_1;
-    wire [6:0] seg_out_2;
-    wire [6:0] seg_out_3;
-/** **/
     assign io_oeb[37:0] = 38'h00_0000_0000;
+
     // UART - GPIO
     assign io_out[37] = tx;
     assign rx = io_in[36];
@@ -68,7 +77,6 @@ module computer(
     wire receive_flag;
     reg tx_en;
     reg rx_en;
-    //reg begin_flag;
     wire begin_flag;
     reg [7:0] tx_data;
     wire [7:0] rx_data;
@@ -155,10 +163,8 @@ module computer(
     always @(posedge clock) begin
         if(rs_data == 8'd253 && mem_w_en == 1) begin
             tx_data <= rd_data;
-            //begin_flag = 1;
         end else begin
             tx_data <= tx_data;
-            //begin_flag = 0;
         end
     end
 
@@ -185,7 +191,6 @@ module computer(
                       : (rs_data == 8'd249) ? gpio_in
                       : _mem_r_data;   
 
-    //割り込み要求が立っている時は割り込み不許可
     always @(posedge clock) begin
         if(int_req == 1'b1) begin
             int_en <= 8'h00;
@@ -195,7 +200,6 @@ module computer(
     end
 
     always @(posedge clock) begin
-        //割り込みベクタの書き込み
         if(rs_data == 8'd250 && mem_w_en == 1'b1) begin
             int_vec <= rd_data;
         end else begin
