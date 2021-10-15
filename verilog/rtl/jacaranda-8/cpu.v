@@ -75,7 +75,7 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
     always @(posedge clock or posedge reset) begin
         if(reset) begin
             flag <= 0;
-        end if(ret) begin
+        end else if(ret) begin
             flag <= _flag;
         end else if(je_en) begin
             flag <= 0;
