@@ -58,6 +58,10 @@ assign clk   = wb_clk_i;
 always @(posedge clk) begin
     if(reset) begin
         ready <= 1'b0;
+        instr_mem_addr <= 8'b0;
+        instr_mem_data <= 8'b0;
+        instr_mem_en <= 1'b0;
+        uart_freq <= 32'd50_000_000;
     end else begin
         if(ready) begin
             ready <= 1'b0;

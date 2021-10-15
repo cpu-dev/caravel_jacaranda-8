@@ -72,8 +72,10 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
 
     alu alu(rd_data, rs_data, alu_ctrl, alu_out);
 
-    always @(posedge clock) begin
-        if(ret) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            flag <= 0;
+        end if(ret) begin
             flag <= _flag;
         end else if(je_en) begin
             flag <= 0;
@@ -84,16 +86,20 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
         end
     end
 
-    always @(posedge clock) begin
-        if(ret) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            intr_en <= 1'b0;
+        end else if(ret) begin
             intr_en <= 1'b0;
         end else if(int_req && int_en[0]) begin
-				intr_en <= 1'b1;
+			intr_en <= 1'b1;
         end
     end
 
-    always @(posedge clock) begin
-        if(int_req == 1'b1 && int_en[0]) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            ret_addr <= 8'b0;
+        end else if(int_req == 1'b1 && int_en[0]) begin
             if(jmp_en) begin
                 ret_addr <= rs_data;
             end else if(je_en && flag) begin
@@ -106,16 +112,11 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
         end
     end
 
-    always @(posedge reset) begin
-        ret_addr<= 8'h00;
-        flag    <= 1'b0;
-        pc      <= 8'h00;
-        intr_en <= 1'b0;
-        _flag   <= 1'b0;
-    end 
-
-    always @(posedge clock) begin
-        if(int_req && int_en[0]) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            _flag <= 1'b0;
+            pc <= 8'b0;
+        end else if(int_req && int_en[0]) begin
             _flag <= flag;
             pc <= int_vec;
         end else if(ret) begin

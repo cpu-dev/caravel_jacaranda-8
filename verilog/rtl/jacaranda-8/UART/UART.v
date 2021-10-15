@@ -39,8 +39,10 @@ module UART(
 
     assign clk_count_bit = clk_freq / BAUD_RATE;
 
-    always @(negedge clk) begin
-        if(state == 1'b0) begin
+    always @(negedge clk or posedge reset) begin
+        if(reset) begin
+            state <= 1'b0;
+        end else if(state == 1'b0) begin
             int_req <= 1'b0;
             if(receive_flag == 1'b1) begin
                 state <= 1'b1;
@@ -62,6 +64,6 @@ module UART(
     end
 
     tx tx1(clk, reset, tx_en, begin_flag, tx_data, tx, busy_flag, clk_count_bit);
-    rx rx1(clk, rx_en, rx, rx_data, receive_flag, clk_count_bit);
+    rx rx1(clk, reset, rx_en, rx, rx_data, receive_flag, clk_count_bit);
     
 endmodule

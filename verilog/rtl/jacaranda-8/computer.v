@@ -14,17 +14,6 @@
 
 `default_nettype none
 
-// module computer(
-//     input clock,
-//     input rx,
-//     output tx,
-//     output [3:0] led_out_data,
-//     output [6:0] seg_out_1,
-//     output [6:0] seg_out_2,
-//     output [6:0] seg_out_3
-// );
-
-
 module computer(
 `ifdef USE_POWER_PINS
     inout vdda1,	// User area 1 3.3V supply
@@ -88,12 +77,6 @@ module computer(
 
     wire reg_w_en;
 
-    reg [7:0] led_in_data;
-    reg led_begin_flag;
-    wire [7:0] led_state_reg;
-
-    reg [7:0] nanaseg_in_data;
-
     wire [7:0] instr_mem_addr;
     wire [7:0] instr_mem_data; 
     wire instr_mem_en;
@@ -153,23 +136,30 @@ module computer(
             .int_vec(int_vec),
             .reg_w_en(reg_w_en));
 
-    always @(posedge clock) begin
-        if(rs_data == 8'd255 && mem_w_en == 1) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            tx_en <= 1'b0;
+            rx_en <= 1'b0;
+        end else if(rs_data == 8'd255 && mem_w_en == 1) begin
             tx_en <= rd_data[0];
             rx_en <= rd_data[1];
         end
     end
 
-    always @(posedge clock) begin
-        if(rs_data == 8'd253 && mem_w_en == 1) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            tx_data <= 8'b0;
+        end else if(rs_data == 8'd253 && mem_w_en == 1) begin
             tx_data <= rd_data;
         end else begin
             tx_data <= tx_data;
         end
     end
 
-    always @(posedge clock) begin
-        if(rs_data == 8'd251 && mem_w_en == 1) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            gpio_out <= 8'b0;
+        end else if(rs_data == 8'd251 && mem_w_en == 1) begin
             gpio_out <= rd_data;
         end else begin
             gpio_out <= gpio_out;
@@ -191,16 +181,20 @@ module computer(
                       : (rs_data == 8'd249) ? gpio_in
                       : _mem_r_data;   
 
-    always @(posedge clock) begin
-        if(int_req == 1'b1) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            int_en <= 8'b0;
+        end else if(int_req == 1'b1) begin
             int_en <= 8'h00;
         end else if(int_req == 1'b0) begin
             int_en <= 8'h01;
         end
     end
 
-    always @(posedge clock) begin
-        if(rs_data == 8'd250 && mem_w_en == 1'b1) begin
+    always @(posedge clock or posedge reset) begin
+        if(reset) begin
+            int_vec <= 8'b0;
+        end else if(rs_data == 8'd250 && mem_w_en == 1'b1) begin
             int_vec <= rd_data;
         end else begin
             int_vec <= int_vec;
