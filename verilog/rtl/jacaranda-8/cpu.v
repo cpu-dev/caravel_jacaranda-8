@@ -59,7 +59,7 @@ module cpu(
     wire jmp_en, je_en;
     wire ret;
 
-    reg intr_en = 1'b0;
+    reg intr_en;
     reg _flag;
 
     decoder decoder(

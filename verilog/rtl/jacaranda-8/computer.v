@@ -16,14 +16,8 @@
 
 module computer(
 `ifdef USE_POWER_PINS
-    inout vdda1,	// User area 1 3.3V supply
-    inout vdda2,	// User area 2 3.3V supply
-    inout vssa1,	// User area 1 analog ground
-    inout vssa2,	// User area 2 analog ground
     inout vccd1,	// User area 1 1.8V supply
-    inout vccd2,	// User area 2 1.8v supply
     inout vssd1,	// User area 1 digital ground
-    inout vssd2,	// User area 2 digital ground
 `endif
     input wb_clk_i,
     input wb_rst_i,
@@ -100,41 +94,58 @@ module computer(
     wire clock;
     assign clock = reset ? 1'b1 : wb_clk_i;
 
-    wishbone wb(.wb_clk_i(wb_clk_i),
-                .wb_rst_i(wb_rst_i),
-                .wbs_stb_i(wbs_stb_i),
-                .wbs_cyc_i(wbs_cyc_i),
-                .wbs_we_i(wbs_we_i),
-                .wbs_sel_i(wbs_sel_i),
-                .wbs_adr_i(wbs_adr_i),
-                .wbs_dat_i(wbs_dat_i),
-                .wbs_ack_o(wbs_ack_o),
-                .wbs_dat_o(wbs_dat_o),
-                .instr_mem_addr(wb_instr_req_addr),
-                .instr_mem_data(instr_mem_data),
-                .instr_mem_en(instr_mem_en),
-                .uart_freq(uart_clk_freq)
-            );
+    wishbone wb(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .wb_clk_i(wb_clk_i),
+        .wb_rst_i(wb_rst_i),
+        .wbs_stb_i(wbs_stb_i),
+        .wbs_cyc_i(wbs_cyc_i),
+        .wbs_we_i(wbs_we_i),
+        .wbs_sel_i(wbs_sel_i),
+        .wbs_adr_i(wbs_adr_i),
+        .wbs_dat_i(wbs_dat_i),
+        .wbs_ack_o(wbs_ack_o),
+        .wbs_dat_o(wbs_dat_o),
+        .instr_mem_addr(wb_instr_req_addr),
+        .instr_mem_data(instr_mem_data),
+        .instr_mem_en(instr_mem_en),
+        .uart_freq(uart_clk_freq)
+    );
 
-    instr_mem instr_mem(.addr(instr_mem_addr),
-                        .w_data(instr_mem_data),
-                        .w_en(instr_mem_en),
-                        .r_data(instr),
-                        .clock(wb_clk_i),
-                        .reset(reset));
+    instr_mem instr_mem(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .clock(wb_clk_i),
+        .addr(instr_mem_addr),
+        .w_data(instr_mem_data),
+        .w_en(instr_mem_en),
+        .r_data(instr),
+        .reset(reset)
+    );
 
-    cpu cpu(.clock(clock),
-            .reset(reset),
-            .instr(instr),
-            .pc(pc),
-            .rd_data(rd_data),
-            .rs_data(rs_data),
-            .mem_w_en(mem_w_en),
-            .mem_r_data(mem_r_data),
-            .int_req(int_req),
-            .int_en(int_en),
-            .int_vec(int_vec),
-            .reg_w_en(reg_w_en));
+    cpu cpu(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .clock(clock),
+        .reset(reset),
+        .instr(instr),
+        .pc(pc),
+        .rd_data(rd_data),
+        .rs_data(rs_data),
+        .mem_w_en(mem_w_en),
+        .mem_r_data(mem_r_data),
+        .int_req(int_req),
+        .int_en(int_en),
+        .int_vec(int_vec),
+        .reg_w_en(reg_w_en)
+    );
 
     always @(posedge clock or posedge reset) begin
         if(reset) begin
@@ -168,11 +179,16 @@ module computer(
 
     assign begin_flag = (rs_data == 8'd253) & (mem_w_en == 1);
 
-    data_mem data_mem(.addr(rs_data),
-                      .w_data(rd_data),
-                      .w_en(mem_w_en),
-                      .r_data(_mem_r_data),
-                      .clock(clock));
+    data_mem data_mem(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .clock(clock),
+        .w_data(rd_data),
+        .w_en(mem_w_en),
+        .r_data(_mem_r_data)
+    );
 
     assign mem_r_data = (rs_data == 8'd254) ? {6'b0, receive_flag, busy_flag}
                       : (rs_data == 8'd252) ? rx_data
@@ -201,21 +217,25 @@ module computer(
         end
     end
 
-    UART UART(.clk(clock),
-              .reset(reset),
-              .tx_en(tx_en),
-              .rx_en(rx_en),
-              .begin_flag(begin_flag),
-              .rx(rx),
-              .tx_data(tx_data),
-              .tx(tx),
-              .rx_data(rx_data),
-              .busy_flag(busy_flag),
-              .receive_flag(receive_flag),
-              .int_req(int_req),
-              .access_addr(rs_data),
-              .reg_w_en(reg_w_en),
-              .clk_freq(uart_clk_freq)
-        );
-
+    UART UART(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .clk(clock),
+        .reset(reset),
+        .tx_en(tx_en),
+        .rx_en(rx_en),
+        .begin_flag(begin_flag),
+        .rx(rx),
+        .tx_data(tx_data),
+        .tx(tx),
+        .rx_data(rx_data),
+        .busy_flag(busy_flag),
+        .receive_flag(receive_flag),
+        .int_req(int_req),
+        .access_addr(rs_data),
+        .reg_w_en(reg_w_en),
+        .clk_freq(uart_clk_freq)
+    );
 endmodule

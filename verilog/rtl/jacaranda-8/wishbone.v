@@ -13,6 +13,10 @@
 // limitations under the License.
 
 module wishbone(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
     input wb_clk_i,
     input wb_rst_i,
     input wbs_stb_i,

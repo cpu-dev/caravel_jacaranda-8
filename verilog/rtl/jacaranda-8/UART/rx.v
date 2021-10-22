@@ -12,14 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module rx(clk, reset, rx_en, rx, data, end_flag, clk_count_bit);
-    input wire clk;
-    input wire reset;
-    input wire rx_en;
-    input wire rx;
-    output reg[7:0] data;
-    output reg end_flag;
-    input wire [31:0] clk_count_bit;
+module rx(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input wire clk,
+    input wire reset,
+    input wire rx_en,
+    input wire rx,
+    output reg[7:0] data,
+    output reg end_flag,
+    input wire [31:0] clk_count_bit
+);
 
     wire [31:0] clk_begin_to_receive;
 

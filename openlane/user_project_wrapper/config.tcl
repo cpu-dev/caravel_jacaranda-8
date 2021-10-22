@@ -36,22 +36,21 @@ set ::env(VERILOG_FILES) "\
 set ::env(ROUTING_CORES) 16
 
 ## Clock configurations
-set ::env(CLOCK_PORT) "user_clock2"
-set ::env(CLOCK_NET) "mprj.clk"
+set ::env(CLOCK_PORT) wb_clk_i
+set ::env(CLOCK_NET) wb_clk_i
 
-set ::env(CLOCK_PERIOD) "10"
+set ::env(CLOCK_PERIOD) "20"
 
 ## Internal Macros
 ### Macro PDN Connections
 set ::env(FP_PDN_MACRO_HOOKS) "\
-	mprj vccd1 vssd1"
+	computer vccd1 vssd1"
 
 ### Macro Placement
-# set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
+set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
 
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
-	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
     $script_dir/../../verilog/rtl/jacaranda-8/computer.v"
 
 set ::env(EXTRA_LEFS) "\

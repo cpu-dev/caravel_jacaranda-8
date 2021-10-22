@@ -15,6 +15,10 @@
 // baud rate 115200bps, stop bit 1bit, data 8bit, no parity, no flow control
 
 module UART(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
     input wire clk,
     input wire reset,
     input wire tx_en,
@@ -63,7 +67,32 @@ module UART(
         state   <= 1'b0;
     end
 
-    tx tx1(clk, reset, tx_en, begin_flag, tx_data, tx, busy_flag, clk_count_bit);
-    rx rx1(clk, reset, rx_en, rx, rx_data, receive_flag, clk_count_bit);
-    
+    tx tx1(
+    `ifdef USE_POWER_PINS
+        .vccd1(vccd1),  // User area 1 1.8V power
+        .vssd1(vssd1),  // User area 1 digital ground
+    `endif
+        .clk(clk),
+        .reset(reset),
+        .tx_en(tx_en),
+        .begin_flag(begin_flag),
+        .data(tx_data),
+        .tx(tx),
+        .busy_flag(busy_flag),
+        .clk_count_bit(clk_count_bit)
+    );
+
+    rx rx1(
+    `ifdef USE_POWER_PINS
+        .vccd1(vccd1),  // User area 1 1.8V power
+        .vssd1(vssd1),  // User area 1 digital ground
+    `endif
+        .clk(clk),
+        .reset(reset),
+        .rx_en(rx_en),
+        .rx(rx),
+        .data(rx_data),
+        .end_flag(receive_flag),
+        .clk_count_bit(clk_count_bit)
+    );
 endmodule

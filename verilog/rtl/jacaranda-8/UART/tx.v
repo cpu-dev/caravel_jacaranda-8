@@ -12,15 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module tx(clk, reset, tx_en, begin_flag, data, tx, busy_flag, clk_count_bit);
-    input wire clk;
-    input wire reset;
-    input wire tx_en;
-    input wire begin_flag;
-    input wire[7:0] data;
-    output reg tx;
-    output wire busy_flag;
-    input wire [31:0] clk_count_bit;
+module tx(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input wire clk,
+    input wire reset,
+    input wire tx_en,
+    input wire begin_flag,
+    input wire[7:0] data,
+    output reg tx,
+    output wire busy_flag,
+    input wire [31:0] clk_count_bit
+);
 
     reg[1:0] state;
     reg[31:0] clk_count;

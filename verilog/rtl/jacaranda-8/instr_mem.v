@@ -12,13 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module instr_mem(addr, w_data, w_en, r_data, clock, reset);
-    input [7:0] addr;
-    input [7:0] w_data;
-    input w_en;
-    input clock;
-    output [7:0] r_data;
-    input reset;
+module instr_mem(
+`ifdef USE_POWER_PINS
+    inout vccd1,  // User area 1 1.8V power
+    inout vssd1,  // User area 1 digital ground
+`endif
+    input clock,
+    input [7:0] addr,
+    input [7:0] w_data,
+    input w_en,
+    output [7:0] r_data,
+    input reset
+);
 
     reg [7:0] mem[0:255];
     
