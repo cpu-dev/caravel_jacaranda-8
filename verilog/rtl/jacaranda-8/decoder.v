@@ -12,11 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module decoder(instr, opcode, rs_a, rd_a, imm);
-    input [7:0] instr;
-    output [3:0] opcode;
-    output [1:0] rs_a, rd_a;
-    output [3:0] imm;
+module decoder(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input [7:0] instr,
+    output [3:0] opcode,
+    output [1:0] rs_a,
+    output [1:0] rd_a,
+    output [3:0] imm
+);
 
     assign opcode = instr[7:4];
     assign rd_a = instr[3:2];

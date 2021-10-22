@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module alu_controller(opcode, alu_ctrl);
-    input [3:0] opcode;
-    output [3:0] alu_ctrl;
+module alu_controller(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input [3:0] opcode,
+    output [3:0] alu_ctrl
+);
 
     assign alu_ctrl = alu_control(opcode);
 

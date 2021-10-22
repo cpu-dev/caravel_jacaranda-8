@@ -12,10 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module alu(rd, rs, alu_ctrl, alu_out);
-    input [7:0] rd, rs;
-    input [3:0] alu_ctrl;
-    output [7:0] alu_out;
+module alu(
+`ifdef USE_POWER_PINS
+    inout vccd1,	// User area 1 1.8V supply
+    inout vssd1,	// User area 1 digital ground
+`endif
+    input [7:0] rd, 
+    input [7:0] rs,
+    input [3:0] alu_ctrl,
+    output [7:0] alu_out
+);
 
     assign alu_out = execute(rd, rs, alu_ctrl);
 

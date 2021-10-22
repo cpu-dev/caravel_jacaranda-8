@@ -12,17 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module main_controller(opcode, rd_a, reg_w_en, mem_w_en, reg_reg_mem_w_sel, reg_alu_w_sel, flag_w_en, imm_en, ih_il_sel, jmp_en, je_en, ret);
-    input [3:0] opcode;
-    input [1:0] rd_a;
-    output reg_w_en, mem_w_en;
-    output reg_reg_mem_w_sel;
-    output reg_alu_w_sel;
-    output flag_w_en;
-    output imm_en;
-    output ih_il_sel;
-    output jmp_en, je_en;
-    output ret;
+module main_controller(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input [3:0] opcode,
+    input [1:0] rd_a,
+    output reg_w_en,
+    output mem_w_en,
+    output reg_reg_mem_w_sel,
+    output reg_alu_w_sel,
+    output flag_w_en,
+    output imm_en,
+    output ih_il_sel,
+    output jmp_en,
+    output je_en,
+    output ret
+);
 
     assign {reg_w_en, mem_w_en, reg_reg_mem_w_sel, reg_alu_w_sel, flag_w_en, imm_en, ih_il_sel, jmp_en, je_en, ret} = main_control(opcode, rd_a);
     

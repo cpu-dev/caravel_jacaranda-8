@@ -12,13 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module regfile(rd_addr, rs_addr, w_data, w_en, rd_data, rs_data, clock, intr_en);
-    input [1:0] rd_addr, rs_addr;
-    input [7:0] w_data;
-    input w_en;
-    input clock;
-    input intr_en;
-    output [7:0] rs_data, rd_data;
+module regfile(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input [1:0] rd_addr,
+    input [1:0] rs_addr,
+    input [7:0] w_data,
+    input w_en,
+    output [7:0] rd_data,
+    output [7:0] rs_data,
+    input clock,
+    input intr_en
+);
 
     reg [7:0] register[0:3];
     reg [7:0] intr_register[0:3];

@@ -12,19 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_req, int_en, int_vec, reg_w_en);
-    input clock;
-    input reset;
-    input [7:0] instr;
-    input int_req;
-    input [7:0] int_en;
-    input [7:0] int_vec;
-
-    output [7:0] pc;
+module cpu(
+`ifdef use_power_pins
+    inout vccd1,	// user area 1 1.8v supply
+    inout vssd1,	// user area 1 digital ground
+`endif
+    input clock,
+    input reset,
+    input [7:0] instr,
+    output [7:0] pc,
+    output [7:0] rd_data,
+    output [7:0] rs_data,
+    output mem_w_en,
+    input [7:0] mem_r_data,
+    input int_req,
+    input [7:0] int_en,
+    input [7:0] int_vec,
+    output reg_w_en
+);
+    
     reg [7:0] ret_addr;
-    output [7:0] rd_data, rs_data;
-    output mem_w_en;
-    input [7:0] mem_r_data;
+
     reg flag;
     reg [7:0] pc;
     
@@ -32,7 +40,6 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
     wire [1:0] rd_a, rd_a_p, rs_a, rs_a_p;
     wire [3:0] imm;
 
-    output reg_w_en;
     wire [7:0] reg_w_data;
     wire [7:0] reg_w_data_p;
     wire [7:0] reg_w_data_p_p;
@@ -55,12 +62,60 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
     reg intr_en = 1'b0;
     reg _flag;
 
-    decoder decoder(instr, opcode, rs_a_p, rd_a_p, imm);
+    decoder decoder(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .instr(instr),
+        .opcode(opcode),
+        .rs_a(rs_a_p),
+        .rd_a(rd_a_p),
+        .imm(imm)
+    );
 
-    main_controller main_controller(opcode, rd_a_p, reg_w_en, mem_w_en, reg_reg_mem_w_sel, reg_alu_w_sel, flag_w_en, imm_en, ih_il_sel, jmp_en, je_en, ret);
-    alu_controller alu_controller(opcode, alu_ctrl);
+    main_controller main_controller(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .opcode(opcode),
+        .rd_a(rd_a_p),
+        .reg_w_en(reg_w_en),
+        .mem_w_en(mem_w_en),
+        .reg_reg_mem_w_sel(reg_reg_mem_w_sel),
+        .reg_alu_w_sel(reg_alu_w_sel),
+        .flag_w_en(flag_w_en),
+        .imm_en(imm_en),
+        .ih_il_sel(ih_il_sel),
+        .jmp_en(jmp_en),
+        .je_en(je_en),
+        .ret(ret)
+    );
 
-    regfile regfile(rd_a, rs_a, reg_w_data, reg_w_en, rd_data, rs_data, clock, intr_en);
+    alu_controller alu_controller(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .opcode(opcode),
+        .alu_ctrl(alu_ctrl)
+    );
+
+    regfile regfile(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .rd_addr(rd_a), 
+        .rs_addr(rs_a),
+        .w_data(reg_w_data),
+        .w_en(reg_w_en),
+        .rd_data(rd_data),
+        .rs_data(rs_data), 
+        .clock(clock),
+        .intr_en(intr_en)
+    );
 
     assign rd_a = imm_en ? 2'b11 : rd_a_p;
     assign rs_a = imm_en ? 2'b11 : rs_a_p;
@@ -70,7 +125,16 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
     assign reg_w_imm = ih_il_sel ? {imm, rs_data[3:0]} : {rs_data[7:4], imm};
     assign reg_w_data = imm_en ? reg_w_imm : reg_w_data_p;
 
-    alu alu(rd_data, rs_data, alu_ctrl, alu_out);
+    alu alu(
+    `ifdef use_power_pins
+        .vccd1(vccd1),  // user area 1 1.8v power
+        .vssd1(vssd1),  // user area 1 digital ground
+    `endif
+        .rd(rd_data),
+        .rs(rs_data),
+        .alu_ctrl(alu_ctrl),
+        .alu_out(alu_out)
+    );
 
     always @(posedge clock or posedge reset) begin
         if(reset) begin
