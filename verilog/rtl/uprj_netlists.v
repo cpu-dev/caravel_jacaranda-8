@@ -25,4 +25,17 @@
 `else
     `include "user_project_wrapper.v"
     `include "user_proj_example.v"
+    `include "jacaranda-8/UART/UART.v"
+    `include "jacaranda-8/UART/rx.v"
+    `include "jacaranda-8/UART/tx.v"
+    `include "jacaranda-8/alu.v"
+    `include "jacaranda-8/cpu.v"
+    `include "jacaranda-8/decoder.v"
+    `include "jacaranda-8/alu_controller.v"
+    `include "jacaranda-8/computer.v"
+    `include "jacaranda-8/data_mem.v"
+    `include "jacaranda-8/instr_mem.v"
+    `include "jacaranda-8/main_controller.v"
+    `include "jacaranda-8/regfile.v"
+    `include "jacaranda-8/wishbone.v"
 `endif
