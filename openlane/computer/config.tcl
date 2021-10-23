@@ -42,9 +42,9 @@ set ::env(CLOCK_PORT) wb_clk_i
 set ::env(CLOCK_NET) wb_clk_i
 set ::env(CLOCK_PERIOD) 10
 
-set ::env(PL_TARGET_DENSITY) 0.05
+set ::env(PL_TARGET_DENSITY) 0.30
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 2300 2300"
+set ::env(DIE_AREA) "0 0 2000 2000"
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 

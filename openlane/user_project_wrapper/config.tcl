@@ -39,7 +39,7 @@ set ::env(ROUTING_CORES) 16
 set ::env(CLOCK_PORT) computer.wb_clk_i
 set ::env(CLOCK_NET) computer.wb_clk_i
 
-set ::env(CLOCK_PERIOD) 20
+set ::env(CLOCK_PERIOD) 10
 
 ## Internal Macros
 ### Macro PDN Connections
