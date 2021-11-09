@@ -30,7 +30,7 @@ module tx(clk, reset, tx_en, begin_flag, data, tx, busy_flag, clk_count_bit);
     assign update_flag = (clk_count == clk_count_bit - 32'd1);
     assign busy_flag = ~(state == 2'b00);
 
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if(reset) begin
             clk_count <= 32'd0;
             bit_count <= 3'd0;

@@ -72,7 +72,7 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
 
     alu alu(rd_data, rs_data, alu_ctrl, alu_out);
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             flag <= 0;
         end else if(ret) begin
@@ -86,7 +86,7 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
         end
     end
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             intr_en <= 1'b0;
         end else if(ret) begin
@@ -96,7 +96,7 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
         end
     end
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             ret_addr <= 8'b0;
         end else if(int_req == 1'b1 && int_en[0]) begin
@@ -112,7 +112,7 @@ module cpu(clock, reset, instr, pc, rd_data, rs_data, mem_w_en, mem_r_data, int_
         end
     end
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             _flag <= 1'b0;
             pc <= 8'b0;

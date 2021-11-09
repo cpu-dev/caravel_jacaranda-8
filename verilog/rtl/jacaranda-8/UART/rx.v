@@ -35,7 +35,7 @@ module rx(clk, reset, rx_en, rx, data, end_flag, clk_count_bit);
         ? clk_count == clk_begin_to_receive
         : clk_count == clk_count_bit - 32'd1;
     
-    always @(posedge clk or posedge reset) begin
+    always @(posedge clk) begin
         if(reset) begin
             data <= 8'b0;
             end_flag <= 1'b0;

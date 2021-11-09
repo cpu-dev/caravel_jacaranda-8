@@ -39,7 +39,7 @@ set ::env(ROUTING_CORES) 16
 set ::env(CLOCK_PORT) computer.wb_clk_i
 set ::env(CLOCK_NET) computer.wb_clk_i
 
-set ::env(CLOCK_PERIOD) 10
+set ::env(CLOCK_PERIOD) 500
 
 ## Internal Macros
 ### Macro PDN Connections
@@ -47,7 +47,7 @@ set ::env(FP_PDN_MACRO_HOOKS) "\
 	computer vccd1 vssd1"
 
 ### Macro Placement
-# set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
+set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro.cfg
 
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\

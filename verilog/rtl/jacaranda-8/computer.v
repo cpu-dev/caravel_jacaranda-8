@@ -16,14 +16,8 @@
 
 module computer(
 `ifdef USE_POWER_PINS
-    inout vdda1,	// User area 1 3.3V supply
-    inout vdda2,	// User area 2 3.3V supply
-    inout vssa1,	// User area 1 analog ground
-    inout vssa2,	// User area 2 analog ground
     inout vccd1,	// User area 1 1.8V supply
-    inout vccd2,	// User area 2 1.8v supply
     inout vssd1,	// User area 1 digital ground
-    inout vssd2,	// User area 2 digital ground
 `endif
     input wb_clk_i,
     input wb_rst_i,
@@ -90,7 +84,7 @@ module computer(
     reg [7:0] gpio_out;
     wire [7:0] gpio_in;
 
-    assign io_in[35:28] = gpio_out;
+    assign io_out[35:28] = gpio_out;
     assign gpio_in   = io_out[27:20];
 
     wire reset;
@@ -98,7 +92,7 @@ module computer(
     assign reset = la_data_in[0];
 
     wire clock;
-    assign clock = reset ? 1'b1 : wb_clk_i;
+    assign clock = wb_clk_i;
 
     wishbone wb(.wb_clk_i(wb_clk_i),
                 .wb_rst_i(wb_rst_i),
@@ -136,7 +130,7 @@ module computer(
             .int_vec(int_vec),
             .reg_w_en(reg_w_en));
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             tx_en <= 1'b0;
             rx_en <= 1'b0;
@@ -146,7 +140,7 @@ module computer(
         end
     end
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             tx_data <= 8'b0;
         end else if(rs_data == 8'd253 && mem_w_en == 1) begin
@@ -156,7 +150,7 @@ module computer(
         end
     end
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             gpio_out <= 8'b0;
         end else if(rs_data == 8'd251 && mem_w_en == 1) begin
@@ -181,7 +175,7 @@ module computer(
                       : (rs_data == 8'd249) ? gpio_in
                       : _mem_r_data;   
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             int_en <= 8'b0;
         end else if(int_req == 1'b1) begin
@@ -191,7 +185,7 @@ module computer(
         end
     end
 
-    always @(posedge clock or posedge reset) begin
+    always @(posedge clock) begin
         if(reset) begin
             int_vec <= 8'b0;
         end else if(rs_data == 8'd250 && mem_w_en == 1'b1) begin

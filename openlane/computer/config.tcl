@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set ::env(PDK) "sky130A"
+set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
+
 set script_dir [file dirname [file normalize [info script]]]
 
 set ::env(ROUTING_CORES) 16
@@ -19,7 +22,6 @@ set ::env(ROUTING_CORES) 16
 set ::env(DESIGN_NAME) computer
 
 set ::env(DESIGN_IS_CORE) 0
-set ::env(FP_PDN_CORE_RING) 0
 set ::env(GLB_RT_MAXLAYER) 5
 
 set ::env(VERILOG_FILES) "\
@@ -40,14 +42,19 @@ set ::env(VERILOG_FILES) "\
 
 set ::env(CLOCK_PORT) wb_clk_i
 set ::env(CLOCK_NET) wb_clk_i
-set ::env(CLOCK_PERIOD) 20
+set ::env(CLOCK_PERIOD) 500
 
-set ::env(PL_TARGET_DENSITY) 0.04
-set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 2600 3000"
+set ::env(SYNTH_STRATEGY) "DELAY 2"
+set ::env(FP_PDN_CORE_RING) 0
+set ::env(CELL_PAD) 2
+
+set ::env(PL_TARGET_DENSITY) 0.07
+set ::env(FP_CORE_UTIL) 6
+set ::env(FP_SIZING) relative
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
 set ::env(VDD_NETS) [list {vccd1}]
 set ::env(GND_NETS) [list {vssd1}]
 
+set ::env(DIODE_INSERTION_STRATEGY) 4
