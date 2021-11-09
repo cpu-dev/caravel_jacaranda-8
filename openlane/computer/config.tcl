@@ -23,6 +23,7 @@ set ::env(DESIGN_NAME) computer
 
 set ::env(DESIGN_IS_CORE) 0
 set ::env(GLB_RT_MAXLAYER) 5
+set ::env(FP_PDN_CHECK_NODES) 0
 
 set ::env(VERILOG_FILES) "\
 	$::env(CARAVEL_ROOT)/verilog/rtl/defines.v \
@@ -44,13 +45,20 @@ set ::env(CLOCK_PORT) wb_clk_i
 set ::env(CLOCK_NET) wb_clk_i
 set ::env(CLOCK_PERIOD) 500
 
-set ::env(SYNTH_STRATEGY) "DELAY 2"
-set ::env(FP_PDN_CORE_RING) 0
-set ::env(CELL_PAD) 2
+#set ::env(SYNTH_STRATEGY) "DELAY 2"
 
-set ::env(PL_TARGET_DENSITY) 0.07
-set ::env(FP_CORE_UTIL) 6
-set ::env(FP_SIZING) relative
+set ::env(PL_TARGET_DENSITY) 0.40
+set ::env(FP_SIZING) absolute
+set ::env(DIE_AREA) "0 0 1000 1000"
+#set ::env(FP_CORE_UTIL) 6
+#set ::env(FP_SIZING) relative
+
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
+set ::env(PL_RESIZER_HOLD_SLACK_MARGIN) 0.2
+set ::env(PL_RESIZER_ALLOW_SETUP_VIOS) 1
+set ::env(QUIT_ON_HOLD_VIOLATIONS) 0
+set ::env(GLB_RT_ADJUSTMENT) 0.30
 
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 
@@ -58,3 +66,5 @@ set ::env(VDD_NETS) [list {vccd1}]
 set ::env(GND_NETS) [list {vssd1}]
 
 set ::env(DIODE_INSERTION_STRATEGY) 4
+
+set ::env(RUN_CVC) 1
