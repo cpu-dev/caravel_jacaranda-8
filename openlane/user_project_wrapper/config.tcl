@@ -35,6 +35,8 @@ set ::env(VERILOG_FILES) "\
 
 set ::env(ROUTING_CORES) 16
 
+set ::(DECAP_CELL) "sky130_ef_sc_hd__decap_12"
+
 ## Clock configurations
 set ::env(CLOCK_PORT) computer.wb_clk_i
 set ::env(CLOCK_NET) computer.wb_clk_i

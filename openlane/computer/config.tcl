@@ -41,6 +41,12 @@ set ::env(VERILOG_FILES) "\
     $script_dir/../../verilog/rtl/jacaranda-8/regfile.v \
     $script_dir/../../verilog/rtl/jacaranda-8/wishbone.v"
 
+#set ::env(EXTRA_GDS_FILES) "\
+#    $::env(PDK_ROOT)open_pdks/sky130/custom/sky130_fd_sc_hd/gds/sky130_ef_sc_hd__decap_12.gds"
+
+#set ::env(EXTRA_LEFS) "\
+#    $::env(PDK_ROOT)open_pdks/sky130/custom/sky130_fd_sc_hd/lef/sky130_ef_sc_hd__decap_12.lef"
+
 set ::env(CLOCK_PORT) wb_clk_i
 set ::env(CLOCK_NET) wb_clk_i
 set ::env(CLOCK_PERIOD) 500
@@ -52,6 +58,8 @@ set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 1000 1000"
 #set ::env(FP_CORE_UTIL) 6
 #set ::env(FP_SIZING) relative
+
+set ::(DECAP_CELL) "sky130_ef_sc_hd__decap_12"
 
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) 0
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
