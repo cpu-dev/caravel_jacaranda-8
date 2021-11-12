@@ -5,6 +5,8 @@
 # Jacaranda-8: 8bit CPU
 Jacaranda-8 is educational ISA for home-build CPU beginners. This project implements the microarchitecture: CHARLATAN which is a simple implementation of Jacaranda-8 ISA.The following table shows the specifications of this CPU.
 
+![Jacaranda-8](https://user-images.githubusercontent.com/48832611/141421216-0547e7ee-b17f-46e7-b8ae-626dda074e4c.png)
+
 |item|value|
 |:---------:|:----------:|
 |microarchitecture|CHARLATAN|
