@@ -7,6 +7,10 @@ Jacaranda-8 is educational ISA for home-build CPU beginners. This project implem
 
 ![Jacaranda-8](https://user-images.githubusercontent.com/48832611/141421216-0547e7ee-b17f-46e7-b8ae-626dda074e4c.png)
 
+## Block Diagram
+![Block Diagram](https://github.com/cpu-dev/caravel_jacaranda-8/assets/26131632/6e895b6f-df58-4ac6-a46c-107e579e1e2d)
+https://docs.google.com/presentation/d/1M9L_DIAJ3wQkPJRv0hpnpZlYAiAecfIJjLtLs954qos/edit?usp=sharing
+
 |item|value|
 |:---------:|:----------:|
 |microarchitecture|CHARLATAN|
